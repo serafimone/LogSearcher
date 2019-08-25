@@ -25,6 +25,7 @@ public final class UIElementsBuilder {
 
     private static @NotNull TextArea buildTextArea(@NotNull List<String> lines) {
         TextArea text = new TextArea();
+        text.setEditable(false);
         text.clear();
         for (String line : lines) {
             text.appendText(line + System.lineSeparator());

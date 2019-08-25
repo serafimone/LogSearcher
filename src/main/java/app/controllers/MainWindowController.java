@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +27,8 @@ public class MainWindowController implements Initializable {
     private FileTreeView filesTreeView;
     @FXML
     private TabPane tabPane;
+
+    private SearchParams searchParams;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -59,14 +62,20 @@ public class MainWindowController implements Initializable {
         Tab tab = UIElementsBuilder.buildTabWithFile(clickedItem);
         tabPane.getTabs().add(tab);
         tabPane.getSelectionModel().select(tab);
+        TextArea area = (TextArea) tab.getContent();
+        String text = area.getText();
+        int index = text.indexOf(searchParams.getSearchText());
+        area.selectRange(index, index + searchParams.getSearchText().length());
     }
 
-    void setFilePathsToTreeView(@NotNull SearchParams searchParams) throws IOException {
+    void setFilePathsToTreeView() throws IOException {
         filesTreeView.setRoot(new FileTreeItem(searchParams.getDirectoryPath(), searchParams.getDirectoryPath()));
         for (Path path : getFilesPaths(searchParams)) {
             filesTreeView.addPath(path);
         }
     }
 
-
+    void setSearchParams(SearchParams searchParams) {
+        this.searchParams = searchParams;
+    }
 }

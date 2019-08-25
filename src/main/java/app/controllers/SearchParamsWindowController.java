@@ -100,10 +100,11 @@ public class SearchParamsWindowController implements Initializable {
         root.translateYProperty().set(scene.getHeight());
         paramsStackPane.getChildren().add(root);
         MainWindowController mainWindowController = loader.getController();
-        mainWindowController.setFilePathsToTreeView(new SearchParams(
+        mainWindowController.setSearchParams(new SearchParams(
                 pathToDirectory.getText(),
                 textForSearch.getText(),
-                fileExtensionType.getText()));
+                fileExtensionType.getText().isEmpty() ? "log" : fileExtensionType.getText()));
+        mainWindowController.setFilePathsToTreeView();
         playTransitionAnimation(root);
     }
 

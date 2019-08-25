@@ -16,6 +16,9 @@ import java.util.stream.Collectors;
 public class FilesUtils {
 
     private static boolean filterFile(@NotNull Path path, @NotNull SearchParams searchParams) {
+        if (!path.toFile().canRead()) {
+            return false;
+        }
         if (FilenameUtils.getExtension(path.toString()).equals(searchParams.getFileExtension())) {
             try {
                 BufferedReader reader = new BufferedReader(new FileReader(path.toFile()));
