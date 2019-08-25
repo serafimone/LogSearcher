@@ -1,9 +1,9 @@
-package app.controllers;
+package ru.serafimodin.app.controllers;
 
-import app.data.SearchParams;
-import app.ui.FileTreeItem;
-import app.ui.FileTreeView;
-import app.utils.UIElementsBuilder;
+import ru.serafimodin.app.data.SearchParams;
+import ru.serafimodin.app.ui.FileTreeItem;
+import ru.serafimodin.app.ui.FileTreeView;
+import ru.serafimodin.app.utils.UIElementsBuilder;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -19,7 +19,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.ResourceBundle;
 
-import static app.utils.FilesUtils.getFilesPaths;
+import static ru.serafimodin.app.utils.FilesUtils.getFilesPaths;
 
 public class MainWindowController implements Initializable {
 

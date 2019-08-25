@@ -1,4 +1,4 @@
-package app.file;
+package ru.serafimodin.app.file;
 
 import java.util.TreeSet;
 

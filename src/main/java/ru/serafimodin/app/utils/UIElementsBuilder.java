@@ -1,6 +1,6 @@
-package app.utils;
+package ru.serafimodin.app.utils;
 
-import app.ui.FileTreeItem;
+import ru.serafimodin.app.ui.FileTreeItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;

@@ -1,4 +1,4 @@
-package app.file;
+package ru.serafimodin.app.file;
 
 public enum OutsideRangeQueryResult implements IFileQueryResult {
     BEFORE( true ), AFTER( false );

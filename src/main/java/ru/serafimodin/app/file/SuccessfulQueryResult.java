@@ -1,4 +1,4 @@
-package app.file;
+package ru.serafimodin.app.file;
 
 public class SuccessfulQueryResult implements IFileQueryResult {
     private final int fileLineNumber;

@@ -1,4 +1,4 @@
-package app.file;
+package ru.serafimodin.app.file;
 
 public interface IFileQueryResult {
     boolean isSuccess();

@@ -1,4 +1,4 @@
-package app.utils;
+package ru.serafimodin.app.utils;
 
 public final class OsUtils {
     public static boolean isWindows()

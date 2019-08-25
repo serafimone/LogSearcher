@@ -1,6 +1,6 @@
-package app.controllers;
+package ru.serafimodin.app.controllers;
 
-import app.data.SearchParams;
+import ru.serafimodin.app.data.SearchParams;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;

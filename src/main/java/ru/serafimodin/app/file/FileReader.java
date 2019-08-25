@@ -1,4 +1,4 @@
-package app.file;
+package ru.serafimodin.app.file;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

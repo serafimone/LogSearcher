@@ -1,6 +1,6 @@
-package app.ui;
+package ru.serafimodin.app.ui;
 
-import app.utils.OsUtils;
+import ru.serafimodin.app.utils.OsUtils;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import org.jetbrains.annotations.NotNull;

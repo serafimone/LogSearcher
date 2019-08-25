@@ -1,6 +1,6 @@
-package app.utils;
+package ru.serafimodin.app.utils;
 
-import app.data.SearchParams;
+import ru.serafimodin.app.data.SearchParams;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.NotNull;
 

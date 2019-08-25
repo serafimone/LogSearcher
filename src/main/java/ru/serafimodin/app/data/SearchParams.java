@@ -1,4 +1,4 @@
-package app.data;
+package ru.serafimodin.app.data;
 
 import org.jetbrains.annotations.NotNull;
 

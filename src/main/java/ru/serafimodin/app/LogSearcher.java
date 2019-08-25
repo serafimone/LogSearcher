@@ -1,4 +1,4 @@
-package app;
+package ru.serafimodin.app;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
