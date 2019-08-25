@@ -1,12 +1,16 @@
 package app.ui;
 
+import app.utils.OsUtils;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.nio.file.Path;
 
 public class FileTreeView extends TreeView<String> {
+
+    private final boolean isWindows = OsUtils.isWindows();
 
     private TreeItem<String> currentNode;
 
@@ -29,7 +33,11 @@ public class FileTreeView extends TreeView<String> {
     }
 
     public void addPath(@NotNull Path path) {
-        String[] items = path.toString().substring(1).split("/");
+        String stringRepresentOfPath = path.toString().substring(path.getRoot().toString().length());
+        if (isWindows) {
+            stringRepresentOfPath = stringRepresentOfPath.replace("\\", "/");
+        }
+        String[] items = stringRepresentOfPath.split("/");
         if (currentNode == null) {
             setCurrentNodeToRoot();
         }
@@ -42,7 +50,7 @@ public class FileTreeView extends TreeView<String> {
                 }
             }
             if (found == null) {
-                String subPath = "/" + path.subpath(0, i + 1).toString();
+                String subPath = path.getRoot() + path.subpath(0, i + 1).toString();
                 found = new FileTreeItem(items[i], subPath);
                 currentNode.getChildren().add(found);
             }

@@ -57,7 +57,7 @@ public class MainWindowController implements Initializable {
         TextArea text = new TextArea();
         text.clear();
         for (String line : lines) {
-            text.appendText(line + "/n");
+            text.appendText(line + System.lineSeparator());
         }
         return text;
     }
@@ -86,8 +86,12 @@ public class MainWindowController implements Initializable {
         if (clickedItem == null) {
             return;
         }
+        if (clickedItem.isDirectory()) {
+            return;
+        }
         Tab tab = buildTabWithFile(clickedItem);
         tabPane.getTabs().add(tab);
+        tabPane.getSelectionModel().select(tab);
     }
 
     private List<Path> getFilesPaths(@NotNull SearchParams searchParams) throws IOException {
