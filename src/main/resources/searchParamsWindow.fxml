@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+
+
+<StackPane fx:controller="app.controllers.SearchParamsWindowController" fx:id="paramsStackPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="239.0" prefWidth="577.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <AnchorPane fx:id="paramsRoot" maxHeight="239.0" maxWidth="577.0" minHeight="200.0" minWidth="400.0" prefHeight="239.0" prefWidth="577.0">
+         <children>
+             <GridPane layoutX="14.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                       AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                 <columnConstraints>
+                     <ColumnConstraints hgrow="SOMETIMES" minWidth="20.0" prefWidth="20.0"/>
+                     <ColumnConstraints minWidth="10.0" prefWidth="479.0"/>
+                     <ColumnConstraints hgrow="SOMETIMES" minWidth="20.0" prefWidth="20.0"/>
+                 </columnConstraints>
+                 <rowConstraints>
+                     <RowConstraints maxHeight="336.0" minHeight="0.0" prefHeight="66.0" vgrow="SOMETIMES"/>
+                     <RowConstraints maxHeight="336.0" minHeight="10.0" prefHeight="66.0" vgrow="SOMETIMES"/>
+                     <RowConstraints maxHeight="336.0" minHeight="10.0" prefHeight="66.0" vgrow="SOMETIMES"/>
+                     <RowConstraints maxHeight="336.0" minHeight="10.0" prefHeight="66.0" vgrow="SOMETIMES"/>
+                 </rowConstraints>
+                 <Button fx:id="searchBtn" onAction="#searchBtnClick" alignment="CENTER_RIGHT" disable="true"
+                         mnemonicParsing="false" text="Search" wrapText="true" GridPane.columnIndex="1"
+                         GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                    <GridPane.margin>
+                        <Insets/>
+                    </GridPane.margin>
+                    <font>
+                        <Font size="12.0"/>
+                    </font>
+                 </Button>
+                 <TextField fx:id="textForSearch" disable="true" promptText="Type text for search..."
+                            GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <GridPane.margin>
+                        <Insets top="15.0"/>
+                    </GridPane.margin>
+                 </TextField>
+                 <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1">
+                    <children>
+                        <TextField fx:id="pathToDirectory" disable="true" editable="false" prefHeight="27.0"
+                                   prefWidth="425.0" promptText="Choose directory path">
+                            <HBox.margin>
+                                <Insets top="10.0"/>
+                            </HBox.margin>
+                        </TextField>
+                        <Button mnemonicParsing="false" onAction="#chooseFolderBtnClick" prefHeight="27.0"
+                                prefWidth="59.0" text="...">
+                            <font>
+                                <Font size="12.0"/>
+                            </font>
+                            <HBox.margin>
+                                <Insets top="10.0"/>
+                            </HBox.margin>
+                        </Button>
+                    </children>
+                 </HBox>
+                 <TextField fx:id="fileExtensionType" disable="true"
+                            promptText="Type files extension for search... For example log (not *.log)"
+                            GridPane.columnIndex="1" GridPane.rowIndex="2">
+                    <GridPane.margin>
+                        <Insets top="15.0"/>
+                    </GridPane.margin>
+                 </TextField>
+                 <Label prefHeight="17.0" prefWidth="65.0" text="Path" GridPane.columnIndex="1"
+                        GridPane.valignment="CENTER">
+                    <GridPane.margin>
+                        <Insets bottom="30.0"/>
+                    </GridPane.margin>
+                 </Label>
+                 <Label prefHeight="17.0" prefWidth="97.0" text="Text for search" GridPane.columnIndex="1"
+                        GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                    <GridPane.margin>
+                        <Insets bottom="30.0"/>
+                    </GridPane.margin>
+                 </Label>
+                 <Label prefHeight="17.0" prefWidth="97.0" text="Files extension" GridPane.columnIndex="1"
+                        GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                    <GridPane.margin>
+                        <Insets bottom="30.0"/>
+                    </GridPane.margin>
+                 </Label>
+             </GridPane>
+         </children>
+      </AnchorPane>
+   </children>
+</StackPane>
