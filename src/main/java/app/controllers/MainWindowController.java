@@ -1,6 +1,7 @@
 package app.controllers;
 
 import app.data.SearchParams;
+import app.ui.FileTreeItem;
 import app.ui.FileTreeView;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -10,6 +11,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,8 +38,8 @@ public class MainWindowController implements Initializable {
                 .collect(Collectors.toList());
     }
 
-    public void setFilePathsToTreeView(@NotNull SearchParams searchParams) throws IOException {
-        filesTreeView.setRoot(new TreeItem<>(searchParams.getDirectoryPath()));
+    public void setFilePathsToTreeView(@NotNull SearchParams searchParams) throws IOException, URISyntaxException {
+        filesTreeView.setRoot(new FileTreeItem(searchParams.getDirectoryPath(), searchParams.getDirectoryPath()));
         for (Path path : getFilesPaths(searchParams)) {
             filesTreeView.addPath(path);
         }

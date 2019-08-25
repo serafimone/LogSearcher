@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.function.UnaryOperator;
@@ -90,7 +91,7 @@ public class SearchParamsWindowController implements Initializable {
     }
 
     @FXML
-    private void searchBtnClick(ActionEvent event) throws IOException {
+    private void searchBtnClick(ActionEvent event) throws IOException, URISyntaxException {
         FXMLLoader loader = new FXMLLoader(getClass()
                 .getClassLoader()
                 .getResource("main.fxml"));
