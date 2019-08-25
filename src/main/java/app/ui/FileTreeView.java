@@ -5,7 +5,6 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.nio.file.Path;
 
 public class FileTreeView extends TreeView<String> {

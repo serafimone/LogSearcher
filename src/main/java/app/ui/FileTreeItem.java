@@ -1,6 +1,5 @@
 package app.ui;
 
-import javafx.event.EventType;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
