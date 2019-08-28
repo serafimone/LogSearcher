@@ -1,10 +1,7 @@
 package ru.serafimodin.app.controllers;
 
-import ru.serafimodin.app.data.SearchParams;
 import javafx.animation.Interpolator;
-import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,12 +14,12 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
-import javafx.util.Duration;
 import org.jetbrains.annotations.NotNull;
+import ru.serafimodin.app.data.SearchParams;
+import ru.serafimodin.app.utils.Animator;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.function.UnaryOperator;
@@ -30,9 +27,7 @@ import java.util.function.UnaryOperator;
 public class SearchParamsWindowController implements Initializable {
 
     @FXML
-    private StackPane paramsStackPane;
-    @FXML
-    private AnchorPane paramsRoot;
+    private StackPane paramsRoot;
     @FXML
     private Button searchBtn;
     @FXML
@@ -70,7 +65,7 @@ public class SearchParamsWindowController implements Initializable {
 
     @FXML
     private void chooseFolderBtnClick(ActionEvent event) {
-        File directory = buildDirectoryChooser().showDialog(paramsStackPane.getScene().getWindow());
+        File directory = buildDirectoryChooser().showDialog(paramsRoot.getScene().getWindow());
         if (directory != null) {
             pathToDirectory.setText(directory.getAbsolutePath());
             searchBtn.setDisable(false);
@@ -79,34 +74,25 @@ public class SearchParamsWindowController implements Initializable {
         }
     }
 
-    private void playTransitionAnimation(@NotNull Parent root) {
-        Timeline timeline = new Timeline();
-        KeyValue kv = new KeyValue(root.translateYProperty(), 0, Interpolator.EASE_IN);
-        KeyFrame kf = new KeyFrame(Duration.seconds(1), kv);
-        timeline.getKeyFrames().add(kf);
-        timeline.setOnFinished(t -> {
-            paramsStackPane.getChildren().remove(paramsRoot);
-        });
-        timeline.play();
-    }
-
     @FXML
-    private void searchBtnClick(ActionEvent event) throws IOException, URISyntaxException {
+    private void searchBtnClick(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass()
                 .getClassLoader()
                 .getResource("main.fxml"));
-        Parent root = loader.load();
-        Scene scene = paramsStackPane.getScene();
-        root.translateYProperty().set(scene.getHeight());
-        paramsStackPane.getChildren().add(root);
+        Parent newScreenRoot = loader.load();
+        Scene scene = paramsRoot.getScene();
+        StackPane stack = (StackPane) scene.getRoot();
+        newScreenRoot.translateXProperty().set(scene.getWidth());
+        stack.getChildren().setAll(newScreenRoot);
         MainWindowController mainWindowController = loader.getController();
         mainWindowController.setSearchParams(new SearchParams(
                 pathToDirectory.getText(),
                 textForSearch.getText(),
                 fileExtensionType.getText().isEmpty() ? "log" : fileExtensionType.getText()));
         mainWindowController.setFilePathsToTreeView();
-        playTransitionAnimation(root);
+        Animator.playTransitionAnimation(
+                paramsRoot,
+                paramsRoot,
+                new KeyValue(newScreenRoot.translateXProperty(), 0, Interpolator.EASE_IN));
     }
-
-
 }

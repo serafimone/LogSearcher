@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -22,12 +23,12 @@ public class LogSearcher extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("searchParamsWindow.fxml")));
-        Scene mainScene = new Scene(root);
+        Parent screen = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("searchParamsWindow.fxml")));
+        Scene mainScene = new Scene(screen);
         stage.setScene(mainScene);
         stage.setTitle("LogSearcher");
-        stage.setMinWidth(500);
-        stage.setMinHeight(300);
+        stage.setMinWidth(700);
+        stage.setMinHeight(450);
         //stage.setResizable(false);
         stage.show();
     }

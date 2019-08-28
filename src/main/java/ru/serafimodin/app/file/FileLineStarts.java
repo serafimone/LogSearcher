@@ -2,14 +2,17 @@ package ru.serafimodin.app.file;
 
 import java.util.TreeSet;
 
-public class FileLineStarts {
+/**
+ * Representation of a file line start indexes.
+ */
+class FileLineStarts {
 
     private final int size;
     private final TreeSet<Long> indexes = new TreeSet<>();
 
-    FileLineStarts(int size) {
-        if (size < 1L) {
-            throw new IllegalArgumentException("Size must be more than zero!");
+    FileLineStarts( int size ) {
+        if ( size < 1L ) {
+            throw new IllegalArgumentException( "Size must be positive" );
         }
         this.size = size;
     }

@@ -1,5 +1,6 @@
 package ru.serafimodin.app.ui;
 
+import javafx.application.Platform;
 import ru.serafimodin.app.utils.OsUtils;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -32,29 +33,31 @@ public class FileTreeView extends TreeView<String> {
     }
 
     public void addPath(@NotNull Path path) {
-        String stringRepresentOfPath = path.toString().substring(path.getRoot().toString().length());
-        if (isWindows) {
-            stringRepresentOfPath = stringRepresentOfPath.replace("\\", "/");
-        }
-        String[] items = stringRepresentOfPath.split("/");
-        if (currentNode == null) {
-            setCurrentNodeToRoot();
-        }
-        for (int i = 0; i < items.length; i++) {
-            FileTreeItem found = null;
-            for (TreeItem<String> child : currentNode.getChildren()) {
-                if (child.getValue().equals(items[i])) {
-                    found = (FileTreeItem) child;
-                    break;
+        Platform.runLater(() -> {
+            String stringRepresentOfPath = path.toString().substring(path.getRoot().toString().length());
+            if (isWindows) {
+                stringRepresentOfPath = stringRepresentOfPath.replace("\\", "/");
+            }
+            String[] items = stringRepresentOfPath.split("/");
+            if (currentNode == null) {
+                setCurrentNodeToRoot();
+            }
+            for (int i = 0; i < items.length; i++) {
+                FileTreeItem found = null;
+                for (TreeItem<String> child : currentNode.getChildren()) {
+                    if (child.getValue().equals(items[i])) {
+                        found = (FileTreeItem) child;
+                        break;
+                    }
                 }
+                if (found == null) {
+                    String subPath = path.getRoot() + path.subpath(0, i + 1).toString();
+                    found = new FileTreeItem(items[i], subPath);
+                    currentNode.getChildren().add(found);
+                }
+                currentNode = found;
             }
-            if (found == null) {
-                String subPath = path.getRoot() + path.subpath(0, i + 1).toString();
-                found = new FileTreeItem(items[i], subPath);
-                currentNode.getChildren().add(found);
-            }
-            currentNode = found;
-        }
-        setCurrentNodeToRoot();
+            setCurrentNodeToRoot();
+        });
     }
 }
