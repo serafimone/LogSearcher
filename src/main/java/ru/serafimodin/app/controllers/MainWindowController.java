@@ -32,7 +32,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class MainWindowController implements Initializable {
@@ -90,10 +89,7 @@ public class MainWindowController implements Initializable {
         StackPane stack = (StackPane) scene.getRoot();
         paramsRoot.translateXProperty().set(scene.getWidth());
         stack.getChildren().setAll(paramsRoot);
-        Animator.playTransitionAnimation(
-                paramsRoot,
-                (StackPane) scene.getRoot(),
-                new KeyValue(paramsRoot.translateXProperty(), 0, Interpolator.EASE_OUT));
+        Animator.playTransitionAnimation(new KeyValue(paramsRoot.translateXProperty(), 0, Interpolator.EASE_OUT));
     }
 
     private @NotNull ObservableList<Path> buildPathsObservableList() {

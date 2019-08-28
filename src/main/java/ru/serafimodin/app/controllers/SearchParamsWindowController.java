@@ -11,7 +11,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
 import org.jetbrains.annotations.NotNull;
@@ -90,9 +89,6 @@ public class SearchParamsWindowController implements Initializable {
                 textForSearch.getText(),
                 fileExtensionType.getText().isEmpty() ? "log" : fileExtensionType.getText()));
         mainWindowController.setFilePathsToTreeView();
-        Animator.playTransitionAnimation(
-                paramsRoot,
-                paramsRoot,
-                new KeyValue(newScreenRoot.translateXProperty(), 0, Interpolator.EASE_IN));
+        Animator.playTransitionAnimation(new KeyValue(newScreenRoot.translateXProperty(), 0, Interpolator.EASE_IN));
     }
 }
