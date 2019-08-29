@@ -1,10 +1,11 @@
 package ru.serafimodin.app.ui;
 
 import javafx.application.Platform;
-import ru.serafimodin.app.utils.OsUtils;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import org.jetbrains.annotations.NotNull;
+import ru.serafimodin.app.file.FileInformation;
+import ru.serafimodin.app.utils.OsUtils;
 
 import java.nio.file.Path;
 
@@ -32,7 +33,8 @@ public class FileTreeView extends TreeView<String> {
         setCurrentNode(getRoot());
     }
 
-    public void addPath(@NotNull Path path) {
+    public void addPath(@NotNull FileInformation information) {
+        Path path = information.getPath();
         Platform.runLater(() -> {
             String stringRepresentOfPath = path.toString().substring(path.getRoot().toString().length());
             if (isWindows) {
@@ -52,7 +54,7 @@ public class FileTreeView extends TreeView<String> {
                 }
                 if (found == null) {
                     String subPath = path.getRoot() + path.subpath(0, i + 1).toString();
-                    found = new FileTreeItem(items[i], subPath);
+                    found = new FileTreeItem(items[i], new FileInformation(Path.of(subPath), information.getFirstLineWithNeededText()));
                     currentNode.getChildren().add(found);
                 }
                 currentNode = found;

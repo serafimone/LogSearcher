@@ -22,11 +22,16 @@ public class FileReader {
         MOVE, REFRESH
     }
 
+    private enum SearchDirection {
+        UP, DOWN, ANY
+    }
+
     private final File file;
     private final int bufferSize;
     private final FileLineStarts lineStarts;
     private final Predicate<String> lineFilter;
 
+    private final int MAX_LINES_IN_WINDOW = 100;
     private boolean noLinesDown = true;
     private boolean noLinesUp = true;
 
@@ -38,11 +43,11 @@ public class FileReader {
         top();
     }
 
-    public void top() {
+    private void top() {
         noLinesDown = false;
         noLinesUp = true;
         lineStarts.clear();
-        lineStarts.addFirst( 0L );
+        lineStarts.addFirst(0L);
     }
 
     public void tail() {
@@ -50,46 +55,46 @@ public class FileReader {
         noLinesUp = false;
         lineStarts.clear();
         // FIXME if filter is enabled, we need to find the last line that's filtered
-        lineStarts.addFirst( file.length() + 1 );
+        lineStarts.addFirst(file.length() + 1);
     }
 
-    public Optional<List<String>> moveUp( int lines ) {
-        log.trace( "Moving up {} lines", lines );
-        if ( lines < 1 ) {
+    public Optional<List<String>> moveUp(int lines) {
+        log.trace("Moving up {} lines", lines);
+        if (lines < 1) {
             return Optional.empty();
         }
 
         noLinesDown = false;
 
-        if ( noLinesUp ) {
-            return Optional.empty();
+        if (noLinesUp) {
+            return Optional.of(new LinkedList<>());
         }
 
-        Optional<List<String>> result = loadFromBottom( lineStarts.getFirst() - 1L, lines, LoadMode.MOVE );
+        Optional<List<String>> result = loadFromBottom(lineStarts.getFirst() - 1L, lines, LoadMode.MOVE);
 
-        if ( result.isPresent() && result.get().isEmpty() ) {
+        if (result.isPresent() && result.get().isEmpty()) {
             noLinesUp = true;
         }
 
         return result;
     }
 
-    public Optional<List<String>> moveDown( int lines ) {
-        log.trace( "Moving down {} lines", lines );
+    public Optional<List<String>> moveDown(int lines) {
+        log.trace("Moving down {} lines", lines);
 
-        if ( lines < 1 ) {
+        if (lines < 1) {
             return Optional.empty();
         }
 
         noLinesUp = false;
 
-        if ( noLinesDown ) {
-            return Optional.empty();
+        if (noLinesDown) {
+            return Optional.of(new LinkedList<>());
         }
 
-        Optional<List<String>> result = loadFromTop( lineStarts.getLast(), lines, LoadMode.MOVE );
+        Optional<List<String>> result = loadFromTop(lineStarts.getLast(), lines, LoadMode.MOVE);
 
-        if ( result.isPresent() && result.get().isEmpty() ) {
+        if (result.isPresent() && result.get().isEmpty()) {
             noLinesDown = true;
         }
 
@@ -97,250 +102,250 @@ public class FileReader {
     }
 
     private Optional<List<String>> loadFromTop(Long firstLineStartIndex,
-                                       final int lines,
-                                       final LoadMode mode) {
+                                               final int lines,
+                                               final LoadMode mode) {
         if (!file.isFile()) {
             return Optional.empty();
         }
 
-        if ( firstLineStartIndex >= file.length() - 1 ) {
-            log.trace( "Already at the top of the file, nothing to return" );
-            return Optional.of( new LinkedList<>() );
+        if (firstLineStartIndex >= file.length() - 1) {
+            log.trace("Already at the top of the file, nothing to return");
+            return Optional.of(new LinkedList<>());
         }
-        byte[] buffer = new byte[ bufferSize ];
+        byte[] buffer = new byte[bufferSize];
         LinkedList<String> result = new LinkedList<>();
-        byte[] topBytes = new byte[ 0 ];
+        byte[] topBytes = new byte[0];
 
-        try ( RandomAccessFile reader = new RandomAccessFile( file, "r" ) ) {
-            if ( mode == LoadMode.REFRESH ) {
+        try (RandomAccessFile reader = new RandomAccessFile(file, "r")) {
+            if (mode == LoadMode.REFRESH) {
                 lineStarts.clear();
-                firstLineStartIndex = seekLineStartBefore( firstLineStartIndex, reader );
+                firstLineStartIndex = seekLineStartBefore(firstLineStartIndex, reader);
             }
 
-            lineStarts.addLast( firstLineStartIndex );
+            lineStarts.addLast(firstLineStartIndex);
 
-            log.trace( "Seeking position {}", firstLineStartIndex );
-            reader.seek( firstLineStartIndex );
+            log.trace("Seeking position {}", firstLineStartIndex);
+            reader.seek(firstLineStartIndex);
 
             readerMainLoop:
-            while ( true ) {
+            while (true) {
                 final long startIndex = reader.getFilePointer();
                 final long lastIndex = reader.length() - 1;
                 long fileIndex = startIndex;
 
-                log.trace( "Reading chunk {}..{}",
-                        startIndex, startIndex + bufferSize );
+                log.trace("Reading chunk {}..{}",
+                        startIndex, startIndex + bufferSize);
 
-                final int bytesRead = reader.read( buffer );
+                final int bytesRead = reader.read(buffer);
                 int lineStartIndex = 0;
 
-                if ( log.isTraceEnabled() && bytesRead > 0 && bytesRead < bufferSize ) {
-                    log.trace( "Did not read full buffer, chunk that got read is {}..{}", startIndex, startIndex + bytesRead );
+                if (log.isTraceEnabled() && bytesRead > 0 && bytesRead < bufferSize) {
+                    log.trace("Did not read full buffer, chunk that got read is {}..{}", startIndex, startIndex + bytesRead);
                 }
 
-                for ( int i = 0; i < bytesRead; i++ ) {
-                    byte b = buffer[ i ];
-                    boolean isNewLine = ( b == '\n' );
-                    boolean isLastByte = ( fileIndex == lastIndex );
+                for (int i = 0; i < bytesRead; i++) {
+                    byte b = buffer[i];
+                    boolean isNewLine = (b == '\n');
+                    boolean isLastByte = (fileIndex == lastIndex);
 
-                    if ( isNewLine || isLastByte ) {
+                    if (isNewLine || isLastByte) {
                         // if the byte is a new line, don't include it in the result
                         int lineEndIndex = isNewLine ? i - 1 : i;
 
-                        if ( isNewLine && i > 0 && buffer[ i - 1 ] == '\r' ) {
+                        if (isNewLine && i > 0 && buffer[i - 1] == '\r') {
                             // do not include the return character in the line
                             lineEndIndex--;
                         }
 
                         int lineLength = lineEndIndex - lineStartIndex + 1;
 
-                        byte[] lineBytes = new byte[ lineLength + topBytes.length ];
-                        log.trace( "Found line, copying [{}:{}] bytes from buffer + {} from top",
-                                lineStartIndex, lineLength, topBytes.length );
-                        System.arraycopy( topBytes, 0, lineBytes, 0, topBytes.length );
-                        System.arraycopy( buffer, lineStartIndex, lineBytes, topBytes.length, lineLength );
+                        byte[] lineBytes = new byte[lineLength + topBytes.length];
+                        log.trace("Found line, copying [{}:{}] bytes from buffer + {} from top",
+                                lineStartIndex, lineLength, topBytes.length);
+                        System.arraycopy(topBytes, 0, lineBytes, 0, topBytes.length);
+                        System.arraycopy(buffer, lineStartIndex, lineBytes, topBytes.length, lineLength);
 
-                        String line = new String( lineBytes, StandardCharsets.UTF_8 );
+                        String line = new String(lineBytes, StandardCharsets.UTF_8);
 
-                        if ( lineFilter.test( line ) ) {
-                            lineStarts.addLast( startIndex + i + 1 );
-                            result.addLast( line );
-                            log.trace( "Added line: {}", line );
-                            if ( result.size() >= lines ) {
-                                log.trace( "Got enough lines, breaking out of reader loop" );
+                        if (lineFilter.test(line)) {
+                            lineStarts.addLast(startIndex + i + 1);
+                            result.addLast(line);
+                            log.trace("Added line: {}", line);
+                            if (result.size() >= lines) {
+                                log.trace("Got enough lines, breaking out of reader loop");
                                 break readerMainLoop;
                             }
                         }
 
-                        topBytes = new byte[ 0 ];
+                        topBytes = new byte[0];
                         lineStartIndex = isNewLine ? i + 1 : i;
                     }
 
                     fileIndex++;
                 }
 
-                if ( bytesRead < 0L ) {
-                    log.trace( "Reached file end, breaking out of reader loop" );
+                if (bytesRead < 0L) {
+                    log.trace("Reached file end, breaking out of reader loop");
                     break;
                 }
 
                 // remember the current buffer bytes as the next top bytes
                 int bytesToCopy = bufferSize - lineStartIndex;
-                byte[] newTop = new byte[ topBytes.length + bytesToCopy ];
-                System.arraycopy( buffer, lineStartIndex, newTop, 0, bytesToCopy );
-                System.arraycopy( topBytes, 0, newTop, bytesToCopy, topBytes.length );
-                log.trace( "Updated top bytes, now top has {} bytes", newTop.length );
+                byte[] newTop = new byte[topBytes.length + bytesToCopy];
+                System.arraycopy(buffer, lineStartIndex, newTop, 0, bytesToCopy);
+                System.arraycopy(topBytes, 0, newTop, bytesToCopy, topBytes.length);
+                log.trace("Updated top bytes, now top has {} bytes", newTop.length);
                 topBytes = newTop;
             }
 
-            log.debug( "Loaded {} lines from file {}", result.size(), file );
-            log.trace( "Line starts: {}", lineStarts );
-            return Optional.of( result );
-        } catch ( IOException e ) {
-            log.warn( "Error reading file [{}]: {}", file, e );
+            log.debug("Loaded {} lines from file {}", result.size(), file);
+            log.trace("Line starts: {}", lineStarts);
+            return Optional.of(result);
+        } catch (IOException e) {
+            log.warn("Error reading file [{}]: {}", file, e);
             return Optional.empty();
         }
     }
 
-    private Optional<List<String>> loadFromBottom( final Long firstLineStartIndex,
-                                                         final int lines,
-                                                         final LoadMode mode ) {
-        if ( !file.isFile() ) {
+    private Optional<List<String>> loadFromBottom(final Long firstLineStartIndex,
+                                                  final int lines,
+                                                  final LoadMode mode) {
+        if (!file.isFile()) {
             return Optional.empty();
         }
 
-        log.trace( "Loading {} lines from the bottom of chunk, file: {}", lines, file );
+        log.trace("Loading {} lines from the bottom of chunk, file: {}", lines, file);
 
-        if ( firstLineStartIndex <= 0L ) {
-            log.trace( "Already at the bottom of the file, nothing to return" );
-            return Optional.of( new LinkedList<>() );
+        if (firstLineStartIndex <= 0L) {
+            log.trace("Already at the bottom of the file, nothing to return");
+            return Optional.of(new LinkedList<>());
         }
 
-        byte[] buffer = new byte[ bufferSize ];
+        byte[] buffer = new byte[bufferSize];
         LinkedList<String> result = new LinkedList<>();
-        byte[] tailBytes = new byte[ 0 ];
+        byte[] tailBytes = new byte[0];
         long bufferStartIndex = firstLineStartIndex;
 
-        try ( RandomAccessFile reader = new RandomAccessFile( file, "r" ) ) {
-            if ( mode == LoadMode.REFRESH ) {
+        try (RandomAccessFile reader = new RandomAccessFile(file, "r")) {
+            if (mode == LoadMode.REFRESH) {
                 lineStarts.clear();
-                bufferStartIndex = seekLineStartBefore( firstLineStartIndex, reader );
-                lineStarts.addLast( Math.max( 0L, bufferStartIndex - 1L ) );
+                bufferStartIndex = seekLineStartBefore(firstLineStartIndex, reader);
+                lineStarts.addLast(Math.max(0L, bufferStartIndex - 1L));
             }
 
             readerMainLoop:
-            while ( true ) {
+            while (true) {
                 long previousStartIndex = bufferStartIndex;
 
                 // start reading from the bottom section of the file above the previous position that fits into the buffer
-                bufferStartIndex = Math.max( 0, bufferStartIndex - bufferSize );
+                bufferStartIndex = Math.max(0, bufferStartIndex - bufferSize);
 
-                log.trace( "Seeking position {}", bufferStartIndex );
-                reader.seek( bufferStartIndex );
+                log.trace("Seeking position {}", bufferStartIndex);
+                reader.seek(bufferStartIndex);
 
-                log.trace( "Reading chunk {}:{}, previous start: {}",
-                        bufferStartIndex, bufferStartIndex + bufferSize, previousStartIndex );
+                log.trace("Reading chunk {}:{}, previous start: {}",
+                        bufferStartIndex, bufferStartIndex + bufferSize, previousStartIndex);
 
                 final int bytesRead = bufferStartIndex == 0L && previousStartIndex > 0 ?
-                        reader.read( buffer, 0, ( int ) previousStartIndex ) :
-                        reader.read( buffer );
+                        reader.read(buffer, 0, (int) previousStartIndex) :
+                        reader.read(buffer);
 
                 int lastByteIndex = bytesRead - 1;
 
-                for ( int i = lastByteIndex; i >= 0; i-- ) {
-                    byte b = buffer[ i ];
-                    boolean isNewLine = ( b == '\n' );
-                    boolean firstFileByte = ( bufferStartIndex == 0 && i == 0 );
+                for (int i = lastByteIndex; i >= 0; i--) {
+                    byte b = buffer[i];
+                    boolean isNewLine = (b == '\n');
+                    boolean firstFileByte = (bufferStartIndex == 0 && i == 0);
 
-                    if ( isNewLine || firstFileByte ) {
+                    if (isNewLine || firstFileByte) {
 
                         // if the byte is a new line, don't include it in the result
                         int lineStartIndex = isNewLine ? i + 1 : i;
                         int tailBytesLength = tailBytes.length;
                         int bufferBytesToAdd = lastByteIndex - lineStartIndex + 1;
 
-                        if ( tailBytesLength > 0 ) {
-                            if ( tailBytes[ tailBytesLength - 1 ] == '\r' ) {
+                        if (tailBytesLength > 0) {
+                            if (tailBytes[tailBytesLength - 1] == '\r') {
                                 // do not include the return character in the line
                                 tailBytesLength--;
                             }
-                        } else if ( buffer[ lastByteIndex ] == '\r' ) {
+                        } else if (buffer[lastByteIndex] == '\r') {
                             // no tail, so the return character is removed from the buffer
                             bufferBytesToAdd--;
                         }
 
-                        byte[] lineBytes = new byte[ bufferBytesToAdd + tailBytesLength ];
-                        log.trace( "Found line, copying {} bytes from buffer + {} from tail", bufferBytesToAdd, tailBytes.length );
-                        System.arraycopy( buffer, lineStartIndex, lineBytes, 0, bufferBytesToAdd );
-                        System.arraycopy( tailBytes, 0, lineBytes, bufferBytesToAdd, tailBytesLength );
+                        byte[] lineBytes = new byte[bufferBytesToAdd + tailBytesLength];
+                        log.trace("Found line, copying {} bytes from buffer + {} from tail", bufferBytesToAdd, tailBytes.length);
+                        System.arraycopy(buffer, lineStartIndex, lineBytes, 0, bufferBytesToAdd);
+                        System.arraycopy(tailBytes, 0, lineBytes, bufferBytesToAdd, tailBytesLength);
 
-                        String line = new String( lineBytes, StandardCharsets.UTF_8 );
+                        String line = new String(lineBytes, StandardCharsets.UTF_8);
 
-                        if ( lineFilter.test( line ) ) {
-                            result.addFirst( line );
-                            log.trace( "Added line: {}", line );
+                        if (lineFilter.test(line)) {
+                            result.addFirst(line);
+                            log.trace("Added line: {}", line);
 
-                            if ( isNewLine ) {
-                                lineStarts.addFirst( bufferStartIndex + i + 1 );
+                            if (isNewLine) {
+                                lineStarts.addFirst(bufferStartIndex + i + 1);
                             } else { // this must be the first file byte, remember it
-                                lineStarts.addFirst( 0 );
+                                lineStarts.addFirst(0);
                             }
 
-                            if ( result.size() >= lines ) {
-                                log.trace( "Got enough lines, breaking out of the reader loop" );
+                            if (result.size() >= lines) {
+                                log.trace("Got enough lines, breaking out of the reader loop");
                                 break readerMainLoop;
                             }
                         }
 
-                        tailBytes = new byte[ 0 ];
+                        tailBytes = new byte[0];
                         lastByteIndex = i - 1;
-                        log.trace( "Last byte index is now {}", lastByteIndex );
+                        log.trace("Last byte index is now {}", lastByteIndex);
                     }
                 }
 
-                if ( bufferStartIndex == 0 ) {
-                    log.trace( "Reached file start, breaking out of the reader loop" );
+                if (bufferStartIndex == 0) {
+                    log.trace("Reached file start, breaking out of the reader loop");
                     break;
                 }
 
-                if ( lastByteIndex < 0 ) {
-                    log.trace( "No bytes were read, skipping copying of tail bytes" );
+                if (lastByteIndex < 0) {
+                    log.trace("No bytes were read, skipping copying of tail bytes");
                     continue;
                 }
 
                 // remember the current buffer bytes as the next tail bytes
-                byte[] newTail = new byte[ tailBytes.length + lastByteIndex + 1 ];
-                System.arraycopy( buffer, 0, newTail, 0, lastByteIndex + 1 );
-                System.arraycopy( tailBytes, 0, newTail, lastByteIndex + 1, tailBytes.length );
-                log.trace( "Updated tail, now tail has {} bytes", newTail.length );
+                byte[] newTail = new byte[tailBytes.length + lastByteIndex + 1];
+                System.arraycopy(buffer, 0, newTail, 0, lastByteIndex + 1);
+                System.arraycopy(tailBytes, 0, newTail, lastByteIndex + 1, tailBytes.length);
+                log.trace("Updated tail, now tail has {} bytes", newTail.length);
                 tailBytes = newTail;
             }
 
-            log.debug( "Loaded {} lines from file {}", result.size(), file );
-            log.trace( "Line starts: {}", lineStarts );
-            return Optional.of( result );
-        } catch ( IOException e ) {
-            log.warn( "Error reading file [{}]: {}", file, e );
+            log.debug("Loaded {} lines from file {}", result.size(), file);
+            log.trace("Line starts: {}", lineStarts);
+            return Optional.of(result);
+        } catch (IOException e) {
+            log.warn("Error reading file [{}]: {}", file, e);
             return Optional.empty();
         }
     }
 
-    private long seekLineStartBefore( Long firstLineStartIndex, RandomAccessFile reader ) throws IOException {
-        log.trace( "Seeking line start before or at {}", firstLineStartIndex );
-        if ( firstLineStartIndex == 0L ) {
+    private long seekLineStartBefore(Long firstLineStartIndex, RandomAccessFile reader) throws IOException {
+        log.trace("Seeking line start before or at {}", firstLineStartIndex);
+        if (firstLineStartIndex == 0L) {
             return 0L;
         }
 
-        if ( firstLineStartIndex >= reader.length() ) {
-            log.trace( "Line start found at EOF, file length = {}", reader.length() );
+        if (firstLineStartIndex >= reader.length()) {
+            log.trace("Line start found at EOF, file length = {}", reader.length());
             return reader.length();
         }
 
-        long index = Math.min( firstLineStartIndex - 1, reader.length() - 1 );
-        while ( index > 0 ) {
-            reader.seek( index );
+        long index = Math.min(firstLineStartIndex - 1, reader.length() - 1);
+        while (index > 0) {
+            reader.seek(index);
             int c = reader.read();
-            if ( c == '\n' ) {
+            if (c == '\n') {
                 break;
             } else {
                 index--;
@@ -349,7 +354,7 @@ public class FileReader {
 
         long result = index == 0L ? 0L : index + 1L;
 
-        log.trace( "Line start before {} found at {}", firstLineStartIndex, result );
+        log.trace("Line start before {} found at {}", firstLineStartIndex, result);
 
         return result;
     }

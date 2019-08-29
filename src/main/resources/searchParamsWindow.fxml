@@ -41,7 +41,7 @@
                         </Button>
                      </children>
                   </HBox>
-                  <TextField fx:id="fileExtensionType" disable="true" promptText="Type files extension for search... For example log (not *.log)" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <TextField fx:id="fileExtensionType" disable="true" promptText="Type files extension for search... For example log (not *.log). Default ext is .log" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <GridPane.margin>
                         <Insets top="15.0" />
                      </GridPane.margin>

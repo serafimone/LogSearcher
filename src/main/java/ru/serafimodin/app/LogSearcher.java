@@ -4,7 +4,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -29,7 +28,6 @@ public class LogSearcher extends Application {
         stage.setTitle("LogSearcher");
         stage.setMinWidth(700);
         stage.setMinHeight(450);
-        //stage.setResizable(false);
         stage.show();
     }
 }

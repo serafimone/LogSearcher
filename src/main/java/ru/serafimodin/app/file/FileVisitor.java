@@ -19,9 +19,9 @@ public class FileVisitor extends SimpleFileVisitor<Path> {
     private static final Logger log = LoggerFactory.getLogger(FileVisitor.class.getName());
 
     private final SearchParams searchParams;
-    private final ObservableList<Path> foundFiles;
+    private final ObservableList<FileInformation> foundFiles;
 
-    public FileVisitor(@NotNull SearchParams searchParams, @NotNull ObservableList<Path> foundFiles) {
+    public FileVisitor(@NotNull SearchParams searchParams, @NotNull ObservableList<FileInformation> foundFiles) {
         super();
         this.searchParams = searchParams;
         this.foundFiles = foundFiles;
@@ -33,11 +33,13 @@ public class FileVisitor extends SimpleFileVisitor<Path> {
             try {
                 BufferedReader reader = new BufferedReader(new FileReader(file.toFile()));
                 String nextString;
+                int lineIndex = 0;
                 while ((nextString = reader.readLine()) != null) {
                     if (nextString.contains(searchParams.getSearchText())) {
-                        foundFiles.add(file);
+                        foundFiles.add(new FileInformation(file, lineIndex ));
                         return FileVisitResult.CONTINUE;
                     }
+                    lineIndex++;
                 }
                 reader.close();
             } catch (IOException ex) {
@@ -54,7 +56,7 @@ public class FileVisitor extends SimpleFileVisitor<Path> {
         return FileVisitResult.SKIP_SUBTREE;
     }
 
-    private @NotNull ObservableList<Path> getFoundFiles() {
+    private @NotNull ObservableList<FileInformation> getFoundFiles() {
         return this.foundFiles;
     }
 }

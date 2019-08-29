@@ -1,50 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <?import ru.serafimodin.app.ui.FileTreeView?>
-<AnchorPane fx:id="mainWindowRoot" fx:controller="ru.serafimodin.app.controllers.MainWindowController"
-            prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="mainWindowRoot" prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.serafimodin.app.controllers.MainWindowController">
     <children>
-        <HBox prefHeight="31.0" prefWidth="600.0" AnchorPane.bottomAnchor="367.0" AnchorPane.leftAnchor="1.0"
-              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <children>
-                <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onBackButtonClick"
-                        prefHeight="25.0" prefWidth="25.0" text="&lt;">
-                    <font>
-                        <Font size="12.0"/>
-                    </font>
-                    <HBox.margin>
-                        <Insets top="3.0"/>
-                    </HBox.margin>
-                </Button>
-            </children>
-        </HBox>
-        <SplitPane dividerPositions="0.27424749163879597" layoutY="32.0" maxHeight="-Infinity" maxWidth="-Infinity"
-                   minHeight="-Infinity" minWidth="-Infinity" prefHeight="368.0" prefWidth="600.0"
-                   AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                   AnchorPane.topAnchor="30.0">
+        <SplitPane dividerPositions="0.27424749163879597" layoutY="32.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="368.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
             <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                     <children>
-                        <FileTreeView fx:id="filesTreeView" prefHeight="200.0" prefWidth="174.0"
-                                      AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                                      AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+                        <FileTreeView fx:id="filesTreeView" prefHeight="200.0" prefWidth="174.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                     </children>
                 </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                     <children>
-                        <TabPane fx:id="tabPane" layoutX="1.0" layoutY="1.0" prefHeight="382.0" prefWidth="405.0"
-                                 tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0"
-                                 AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+                        <TabPane fx:id="tabPane" layoutX="1.0" layoutY="1.0" prefHeight="382.0" prefWidth="405.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                     </children>
                 </AnchorPane>
             </items>
         </SplitPane>
+      <GridPane alignment="TOP_RIGHT" prefHeight="31.0" prefWidth="599.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="0.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="547.0" />
+          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="52.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Button fx:id="goTopBtn" disable="true" alignment="CENTER" contentDisplay="CENTER" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onGoTopBtnClick" prefHeight="25.0" prefWidth="25.0" text="^" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="CENTER">
+               <font>
+                  <Font size="12.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </Button>
+            <Button fx:id="goBottomBtn" disable="true" alignment="CENTER" contentDisplay="CENTER" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onGoDownBtnClick" prefHeight="25.0" prefWidth="25.0" style="-fx-rotate: -180;" text="^" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
+               <font>
+                  <Font size="12.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets left="1.0" />
+               </GridPane.margin>
+            </Button>
+                <Button alignment="CENTER" contentDisplay="CENTER" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onBackButtonClick" prefHeight="25.0" prefWidth="25.0" text="&lt;">
+                    <font>
+                        <Font size="12.0" />
+                    </font>
+               <padding>
+                  <Insets right="3.0" />
+               </padding>
+                </Button>
+         </children>
+      </GridPane>
     </children>
 </AnchorPane>
